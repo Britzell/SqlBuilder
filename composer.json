@@ -1,0 +1,25 @@
+{
+    "name": "britzel/sql-builder",
+    "version": "0.1.0",
+    "description": "Sql generator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Britzel",
+            "email": "britzel99@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Britzel\\SqlBuilder\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Britzel\\SqlBuilder\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.2"
+    }
+}
