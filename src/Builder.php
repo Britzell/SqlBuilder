@@ -156,7 +156,7 @@ class Builder
     public function findOneBy(string $criteria, $value, string $class)
     {
         $result = $this->select()->from($class)->where([$criteria => $value])->exec();
-        return $this->createEntity($result, $class);
+        return $this->createEntity($result, $class, true);
     }
 
 }
