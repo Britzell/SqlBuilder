@@ -109,10 +109,13 @@ class Builder
             return $req->fetch();
     }
 
-    public function createEntity($result, string $class)
+    public function createEntity($result, string $class, bool $nullReturnArray = false)
     {
         if ($result == null) {
-            return new $class;
+            if ($nullReturnArray)
+                return [];
+            else
+                return new $class;
         } elseif (isset($result[0])) {
             $tmp = [];
             foreach ($result as $value) {
