@@ -1,6 +1,6 @@
 {
     "name": "britzel/sql-builder",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Sql generator",
     "license": "MIT",
     "authors": [
