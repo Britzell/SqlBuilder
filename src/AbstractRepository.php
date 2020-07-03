@@ -70,7 +70,7 @@ abstract class AbstractRepository
      * @param null $offset
      * @return array
      */
-    public function findBy(string $criteria, $value, $limit = null, $offset = null): array
+    public function findBy(string $criteria, $value, $limit = null, $offset = null)
     {
         return $this->getBuilder()->findBy($criteria, $value, $limit, $offset, $this->getClassName());
     }

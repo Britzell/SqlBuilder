@@ -117,6 +117,11 @@ class Builder
             else
                 return new $class;
         } elseif (isset($result[0])) {
+            if (count($result) == 1) {
+                $entity = new $class;
+                $entity->hydrate($result[0]);
+                return $entity;
+            }
             $tmp = [];
             foreach ($result as $value) {
                 $entity = new $class;
