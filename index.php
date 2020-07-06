@@ -29,3 +29,8 @@ $users = $userRepo->findAll();
 d($users);
 
 d($_ENV['debug']);
+
+
+
+$builder = new \Britzel\SqlBuilder\Builder();
+d($builder->searchTableName(App\Entity\UserRelation::class));

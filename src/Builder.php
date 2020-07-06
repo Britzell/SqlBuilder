@@ -52,7 +52,15 @@ class Builder
     public function searchTableName(string $class)
     {
         $classExplode = explode('\\', $class);
-        return strtolower($classExplode[count($classExplode) - 1]);
+        preg_match_all('/[A-Z]{1}[a-z]{1,}/', $classExplode[count($classExplode) - 1], $result);
+        $table = '';
+        d($result);
+        foreach ($result[0] as $key => $value) {
+            if ($key != 0)
+                $table .= '_';
+            $table .= $value;
+        }
+        return strtolower($table);
     }
 
     public function searchEntity(string $repository)
