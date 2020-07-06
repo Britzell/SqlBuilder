@@ -56,9 +56,9 @@ abstract class AbstractRepository
     }
 
     /**
-     * @return array
+     * @return array|object
      */
-    public function findAll(): array
+    public function findAll()
     {
         return $this->getBuilder()->findAll($this->getClassName());
     }
@@ -68,7 +68,7 @@ abstract class AbstractRepository
      * @param $value
      * @param null $limit
      * @param null $offset
-     * @return array
+     * @return array|object
      */
     public function findBy(string $criteria, $value, $limit = null, $offset = null)
     {
