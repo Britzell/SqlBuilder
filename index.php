@@ -20,17 +20,24 @@ $db = new Database();
 
 $userRepo = new UserRepository();
 $user = $userRepo->find(1);
+d('find');
 d($user);
 $user2 = $userRepo->findBy('email', 'ok@google.fr');
+d('findBy');
 d($user2);
 $user3 = $userRepo->findOneBy('email', 'ok@google.fr');
+d('findOneBy');
+d($user3);
+$user3 = $userRepo->findOneBy('email', 'okok@google.fr');
+d('findOneBy, result null');
 d($user3);
 $users = $userRepo->findAll();
+d('findAll');
 d($users);
 
+d('Query');
 d($_ENV['debug']);
 
-
-
+d('searchTableName');
 $builder = new \Britzel\SqlBuilder\Builder();
 d($builder->searchTableName(App\Entity\UserRelation::class));

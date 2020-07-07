@@ -9,16 +9,25 @@ class Builder
 
     private $query = '';
 
+    /**
+     * @param string $add
+     */
     public function addQuery(string $add)
     {
         $this->query .= $add;
     }
 
+    /**
+     * @return string
+     */
     public function getQuery(): string
     {
         return $this->query;
     }
 
+    /**
+     * Delete Query
+     */
     private function deleteQuery()
     {
         $this->query = '';
@@ -33,6 +42,11 @@ class Builder
         return $this;
     }
 
+    /**
+     * @param $query
+     * @param bool $params
+     * @return bool|false|\PDOStatement
+     */
     public function query($query, $params = false)
     {
         if ($params) {
@@ -44,17 +58,23 @@ class Builder
         return $req;
     }
 
+    /**
+     * @return string
+     */
     public function lastInsertId()
     {
         return Database::$pdo->lastInsertId();
     }
 
+    /**
+     * @param string $class
+     * @return string
+     */
     public function searchTableName(string $class)
     {
         $classExplode = explode('\\', $class);
         preg_match_all('/[A-Z]{1}[a-z]{1,}/', $classExplode[count($classExplode) - 1], $result);
         $table = '';
-        d($result);
         foreach ($result[0] as $key => $value) {
             if ($key != 0)
                 $table .= '_';
@@ -63,6 +83,10 @@ class Builder
         return strtolower($table);
     }
 
+    /**
+     * @param string $repository
+     * @return false|string
+     */
     public function searchEntity(string $repository)
     {
         $repositoryExplode = explode('\\', $repository);
@@ -70,6 +94,10 @@ class Builder
         return substr($name, 0, -10);
     }
 
+    /**
+     * @param array|string[] $selected
+     * @return $this
+     */
     public function select(array $selected = ['*'])
     {
         $tmp = 'SELECT ';
@@ -80,12 +108,20 @@ class Builder
         return $this;
     }
 
+    /**
+     * @param $class
+     * @return $this
+     */
     public function from($class)
     {
         $this->addQuery(' FROM ' . $this->searchTableName($class));
         return $this;
     }
 
+    /**
+     * @param array $where
+     * @return $this
+     */
     public function where(array $where)
     {
         $tmp = ' WHERE ';
@@ -96,16 +132,42 @@ class Builder
         return $this;
     }
 
+    /**
+     * @param int $limit
+     * @return $this
+     */
     public function limit(int $limit) {
         $this->addQuery(' LIMIT ' . $limit);
         return $this;
     }
 
+    /**
+     * @param int $offset
+     * @return $this
+     */
     public function offset(int $offset) {
         $this->addQuery(' , ' . $offset);
         return $this;
     }
 
+    /**
+     * @param array $order
+     * @return $this
+     */
+    public function order(array $order)
+    {
+        $tmp = '';
+        foreach ($order as $key => $value) {
+            $tmp .= ' ' . $key . ' ' . $value . ',';
+        }
+        $this->addQuery(' ORDER BY' . substr($tmp, 0, -1));
+        return $this;
+    }
+
+    /**
+     * @param bool $fetchAll
+     * @return array|mixed
+     */
     public function exec(bool $fetchAll = false)
     {
         $req = $this->query($this->getQuery());
@@ -117,6 +179,12 @@ class Builder
             return $req->fetch();
     }
 
+    /**
+     * @param $result
+     * @param string $class
+     * @param bool $nullReturnArray
+     * @return array|mixed
+     */
     public function createEntity($result, string $class, bool $nullReturnArray = false)
     {
         if ($result == null) {
@@ -125,11 +193,6 @@ class Builder
             else
                 return new $class;
         } elseif (isset($result[0])) {
-            if (count($result) == 1) {
-                $entity = new $class;
-                $entity->hydrate($result[0]);
-                return $entity;
-            }
             $tmp = [];
             foreach ($result as $value) {
                 $entity = new $class;
@@ -144,32 +207,61 @@ class Builder
         }
     }
 
+    /**
+     * @param int $id
+     * @param string $class
+     * @return array|mixed
+     */
     public function find(int $id, string $class)
     {
         $result = $this->select()->from($class)->where(['id' => $id])->exec();
         return $this->createEntity($result, $class);
     }
 
+    /**
+     * @param string $class
+     * @return array|mixed
+     */
     public function findAll(string $class)
     {
         $result = $this->select()->from($class)->exec(true);
         return $this->createEntity($result, $class);
     }
 
-    public function findBy(string $criteria, $value, $limit = null, $offset = null, string $class)
+    /**
+     * @param string $criteria
+     * @param $value
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param array|null $order
+     * @param string $class
+     * @return array|mixed
+     */
+    public function findBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
     {
         $req = $this->select()->from($class)->where([$criteria => $value]);
         if ($limit)
             $req = $req->limit($limit);
         if ($offset)
             $req = $req->offset($offset);
+        if ($order)
+            $req = $req->order($order);
         return $this->createEntity($req->exec(true), $class);
     }
 
-    public function findOneBy(string $criteria, $value, string $class)
+    /**
+     * @param string $criteria
+     * @param $value
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param array|null $order
+     * @param string $class
+     * @return array|mixed
+     */
+    public function findOneBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
     {
         $result = $this->select()->from($class)->where([$criteria => $value])->exec();
-        return $this->createEntity($result, $class, true);
+        return $this->createEntity($result, $class);
     }
 
 }

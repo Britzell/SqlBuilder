@@ -49,6 +49,7 @@ abstract class AbstractRepository
 
     /**
      * @param int $id
+     * @return object
      */
     public function find(int $id)
     {
@@ -65,23 +66,28 @@ abstract class AbstractRepository
 
     /**
      * @param string $criteria
-     * @param $value
-     * @param null $limit
-     * @param null $offset
+     * @param int|string $value
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param array|null $order
      * @return array|object
      */
-    public function findBy(string $criteria, $value, $limit = null, $offset = null)
+    public function findBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null)
     {
-        return $this->getBuilder()->findBy($criteria, $value, $limit, $offset, $this->getClassName());
+        return $this->getBuilder()->findBy($criteria, $value, $limit, $offset, $order, $this->getClassName());
     }
 
     /**
      * @param string $criteria
      * @param $value
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param array|null $order
+     * @return object
      */
-    public function findOneBy(string $criteria, $value)
+    public function findOneBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null)
     {
-        return $this->getBuilder()->findOneBy($criteria, $value, $this->getClassName());
+        return $this->getBuilder()->findOneBy($criteria, $value, $limit, $offset, $order, $this->getClassName());
     }
 
 }
