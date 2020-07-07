@@ -49,6 +49,7 @@ class Builder
      */
     public function query($query, $params = false)
     {
+        $_ENV['debug']['query'][] = ['request' => $query, 'params' => $params];
         if ($params) {
             $req = Database::$pdo->prepare($query);
             $req->execute($params);
@@ -171,7 +172,6 @@ class Builder
     public function exec(bool $fetchAll = false)
     {
         $req = $this->query($this->getQuery());
-        $_ENV['debug']['query'][] = $req->queryString;
         $this->deleteQuery();
         if ($fetchAll)
             return $req->fetchAll();
@@ -240,12 +240,12 @@ class Builder
     public function findBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
     {
         $req = $this->select()->from($class)->where([$criteria => $value]);
+        if ($order)
+            $req = $req->order($order);
         if ($limit)
             $req = $req->limit($limit);
         if ($offset)
             $req = $req->offset($offset);
-        if ($order)
-            $req = $req->order($order);
         return $this->createEntity($req->exec(true), $class);
     }
 
@@ -261,12 +261,12 @@ class Builder
     public function findOneBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
     {
         $req = $this->select()->from($class)->where([$criteria => $value]);
+        if ($order)
+            $req = $req->order($order);
         if ($limit)
             $req = $req->limit($limit);
         if ($offset)
             $req = $req->offset($offset);
-        if ($order)
-            $req = $req->order($order);
         return $this->createEntity($req->exec(), $class);
     }
 
