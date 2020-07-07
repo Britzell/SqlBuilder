@@ -260,8 +260,14 @@ class Builder
      */
     public function findOneBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
     {
-        $result = $this->select()->from($class)->where([$criteria => $value])->exec();
-        return $this->createEntity($result, $class);
+        $req = $this->select()->from($class)->where([$criteria => $value]);
+        if ($limit)
+            $req = $req->limit($limit);
+        if ($offset)
+            $req = $req->offset($offset);
+        if ($order)
+            $req = $req->order($order);
+        return $this->createEntity($req->exec(), $class);
     }
 
 }

@@ -28,12 +28,15 @@ d($user2);
 $user3 = $userRepo->findOneBy('email', 'ok@google.fr');
 d('findOneBy');
 d($user3);
-$user3 = $userRepo->findOneBy('email', 'okok@google.fr');
+$user4 = $userRepo->findOneBy('email', 'okok@google.fr');
 d('findOneBy, result null');
-d($user3);
+d($user4);
 $users = $userRepo->findAll();
 d('findAll');
 d($users);
+$user5 = $userRepo->findOneBy('email', 'ok@google.fr', null, null, ['id' => 'DESC']);
+d('findOneBy, order');
+d($user5);
 
 d('Query');
 d($_ENV['debug']);
