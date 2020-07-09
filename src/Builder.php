@@ -128,7 +128,7 @@ class Builder
         $tmp = ' WHERE ';
         foreach ($where as $key => $value) {
             if ($value === null)
-                $tmp .= $key . "=NULL AND ";
+                $tmp .= $key . " IS NULL AND ";
             else
                 $tmp .= $key . "='" . $value . "' AND ";
         }
@@ -274,7 +274,7 @@ class Builder
      */
     public function findOneBy($criteria, $value = null, int $limit = null, int $offset = null, array $order = null, string $class)
     {
-        return $this->findBy($criteria, $value, $limit = null, $offset = null, $order = null, $class);
+        return $this->findBy($criteria, $value, $limit = null, $offset = null, $order = null, $class, false);
     }
 
 }
