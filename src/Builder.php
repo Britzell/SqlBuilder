@@ -127,9 +127,12 @@ class Builder
     {
         $tmp = ' WHERE ';
         foreach ($where as $key => $value) {
-            $tmp .= $key . "='" . $value . "',";
+            if ($value === null)
+                $tmp .= $key . "=NULL,";
+            else
+                $tmp .= $key . "='" . $value . "' AND ";
         }
-        $this->addQuery(substr($tmp, 0, -1));
+        $this->addQuery(substr($tmp, 0, -5));
         return $this;
     }
 
@@ -137,7 +140,8 @@ class Builder
      * @param int $limit
      * @return $this
      */
-    public function limit(int $limit) {
+    public function limit(int $limit)
+    {
         $this->addQuery(' LIMIT ' . $limit);
         return $this;
     }
@@ -146,7 +150,8 @@ class Builder
      * @param int $offset
      * @return $this
      */
-    public function offset(int $offset) {
+    public function offset(int $offset)
+    {
         $this->addQuery(' , ' . $offset);
         return $this;
     }
@@ -229,45 +234,47 @@ class Builder
     }
 
     /**
-     * @param string $criteria
-     * @param $value
+     * @param string|array $criteria
+     * @param int|string|null $value null if $criteria is array
      * @param int|null $limit
      * @param int|null $offset
      * @param array|null $order
      * @param string $class
-     * @return array|mixed
+     * @return array|object
      */
-    public function findBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
+    public function findBy($criteria, $value = null, int $limit = null, int $offset = null, array $order = null, string $class, bool $fetchAll = true)
     {
-        $req = $this->select()->from($class)->where([$criteria => $value]);
+        if (is_array($criteria)) {
+            $tmp = [];
+
+            foreach ($criteria as $key => $value) {
+                $tmp[$key] = $value;
+            }
+
+            $req = $this->select()->from($class)->where($tmp);
+        } else
+            $req = $this->select()->from($class)->where([$criteria => $value]);
         if ($order)
             $req = $req->order($order);
         if ($limit)
             $req = $req->limit($limit);
         if ($offset)
             $req = $req->offset($offset);
-        return $this->createEntity($req->exec(true), $class);
+        return $this->createEntity($req->exec($fetchAll), $class);
     }
 
     /**
-     * @param string $criteria
-     * @param $value
+     * @param string|array $criteria
+     * @param int|string|null $value null if $criteria is array
      * @param int|null $limit
      * @param int|null $offset
      * @param array|null $order
      * @param string $class
-     * @return array|mixed
+     * @return array|object
      */
-    public function findOneBy(string $criteria, $value, int $limit = null, int $offset = null, array $order = null, string $class)
+    public function findOneBy($criteria, $value = null, int $limit = null, int $offset = null, array $order = null, string $class)
     {
-        $req = $this->select()->from($class)->where([$criteria => $value]);
-        if ($order)
-            $req = $req->order($order);
-        if ($limit)
-            $req = $req->limit($limit);
-        if ($offset)
-            $req = $req->offset($offset);
-        return $this->createEntity($req->exec(), $class);
+        return $this->findBy($criteria, $value, $limit = null, $offset = null, $order = null, $class);
     }
 
 }
