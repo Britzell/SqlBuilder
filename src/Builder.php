@@ -128,7 +128,7 @@ class Builder
         $tmp = ' WHERE ';
         foreach ($where as $key => $value) {
             if ($value === null)
-                $tmp .= $key . "=NULL,";
+                $tmp .= $key . "=NULL AND ";
             else
                 $tmp .= $key . "='" . $value . "' AND ";
         }
