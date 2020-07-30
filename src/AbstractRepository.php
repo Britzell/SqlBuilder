@@ -42,9 +42,10 @@ abstract class AbstractRepository
         $this->builder = $builder;
     }
 
-    public function __construct()
+    public function __construct($entityClass)
     {
         $this->setBuilder(new Builder());
+        $this->setClassName($entityClass);
     }
 
     /**
