@@ -73,7 +73,15 @@ class Builder
      */
     public function searchTableName(string $class)
     {
-        $classExplode = explode('\\', $class);
+	    $rc = new \ReflectionClass($class);
+	    if ($rc->getDocComment()) {
+	    	$match = [];
+	    	if (preg_match('/@Britzel\\\SqlBuilder\\\Table\((.*)="(.*)"\)/', $rc->getDocComment(), $match)) {
+	    		if ($match[1] === 'name')
+	    			return $match[2];
+		    }
+	    }
+	    $classExplode = explode('\\', $class);
         preg_match_all('/[A-Z]{1}[a-z]{1,}/', $classExplode[count($classExplode) - 1], $result);
         $table = '';
         foreach ($result[0] as $key => $value) {
